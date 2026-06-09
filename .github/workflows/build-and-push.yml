@@ -1,0 +1,85 @@
+name: "Build and Push"
+
+on:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: "Build"
+    strategy:
+      matrix:
+        env: [ "test", "production" ]
+        hasTag:
+          - ${{ startsWith(github.ref, 'refs/tags/') }}
+        exclude:
+          - hasTag: true
+            env: "test"
+          - hasTag: false
+            env: "production"
+    env:
+      APP_ENV: ${{ matrix.env }}
+    outputs:
+      dockerImageTag: ${{ steps.docker_meta.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.23'
+          cache: true
+      
+      - name: Build Temporal Server
+        run: make temporal-server
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      
+      - name: set aws credentials
+        id: set-aws-credentials
+        run: |
+          if [[ $APP_ENV == "production" ]]; then
+              echo "AWS_REGION=us-east-1" >> "$GITHUB_ENV"
+              echo "AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY_ID }}" >> "$GITHUB_ENV"
+              echo "AWS_SECRET_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> "$GITHUB_ENV"
+          else
+              echo "AWS_REGION=ap-south-1" >> "$GITHUB_ENV"
+              echo "AWS_ACCESS_KEY=${{ secrets.AWS_HEADOUT_TEST_ACCESS_KEY }}" >> "$GITHUB_ENV"
+              echo "AWS_SECRET_KEY=${{ secrets.AWS_HEADOUT_TEST_SECRET_KEY }}" >> "$GITHUB_ENV"
+          fi
+      
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+      
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+      
+      - name: Docker meta
+        id: docker_meta
+        uses: docker/metadata-action@v3
+        with:
+          images: ${{ steps.login-ecr.outputs.registry }}/container-images/temporal-server
+          flavour: |
+            latest=true
+          tags: |
+            type=semver,pattern={{version}}
+            type=ref,event=branch,prefix=${{ matrix.env }}-,suffix=-{{sha}}-{{date 'YYYYMMDD'}}
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+      
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ci/Dockerfile
+          push: true
+          tags: ${{ steps.docker_meta.outputs.tags }}
+          build-args: |
+            APP_ENV=${{ matrix.env }}
+          labels: ${{ steps.docker_meta.outputs.labels }}

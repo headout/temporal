@@ -64,6 +64,7 @@ func (s *VisibilityManagerSuite) SetupTest() {
 		log.NewNoopLogger(),
 		nil, // searchAttributesMapperProvider
 		nil, // chasmRegistry
+		nil, // cacheConfig
 	)
 }
 

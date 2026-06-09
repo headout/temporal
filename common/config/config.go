@@ -459,6 +459,8 @@ type (
 		TaskScanPartitions int `yaml:"taskScanPartitions"`
 		// TLS is the configuration for TLS connections
 		TLS *auth.TLS `yaml:"tls"`
+		// VisibilityCache is the configuration for visibility layer caching
+		VisibilityCache *VisibilityCacheConfig `yaml:"visibilityCache"`
 	}
 
 	// CustomDatastoreConfig is the configuration for connecting to a custom datastore that is not supported by temporal core
