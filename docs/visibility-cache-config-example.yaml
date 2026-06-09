@@ -1,0 +1,39 @@
+# Example configuration for visibility layer caching with PostgreSQL
+
+persistence:
+  defaultStore: default
+  visibilityStore: postgres-visibility
+  numHistoryShards: 4
+  datastores:
+    postgres-visibility:
+      sql:
+        pluginName: "postgres"
+        databaseName: "temporal_visibility"
+        connectAddr: "localhost:5432"
+        connectProtocol: "tcp"
+        user: "temporal"
+        password: "temporal"
+        maxConns: 20
+        maxIdleConns: 10
+        maxConnLifetime: 1h
+        
+        # Visibility cache configuration (simple in-memory caching)
+        # IMPORTANT: Caching is DISABLED by default. You must explicitly enable it.
+        visibilityCache:
+          enabled: true           # Enable caching (default: false)
+          cacheTTLSeconds: 20     # Cache TTL in seconds (default: 20)
+
+# Notes:
+# - Simple in-memory caching using sync.RWMutex (no external dependencies)
+# - Caching is DISABLED by default - you must set enabled: true to activate it
+# - Caching is applied to:
+#   * ListWorkflowExecutions - 15 second TTL
+#   * CountWorkflowExecutions - 20 second TTL (30s for scheduler queries)
+#   * Scheduler count queries - 30 second TTL
+# - Write operations (start, close, upsert, delete) invalidate ALL cache entries for that namespace
+# - Cache keys are SHA256 hashes of (method, namespaceID, query, pageSize, pageToken)
+# - Lazy expiry - entries are checked for expiration on read, no background cleanup
+# - Thread-safe, no goroutine leaks, no global state
+# - Metrics: temporal_visibility_cache_hits_total and temporal_visibility_cache_misses_total
+# - Recommended cacheTTLSeconds: 15-30 for most use cases
+# - To disable: remove the visibilityCache section or set enabled: false

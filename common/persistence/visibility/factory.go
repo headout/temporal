@@ -138,6 +138,7 @@ func newVisibilityManager(
 	logger log.Logger,
 	searchAttributesMapperProvider searchattribute.MapperProvider,
 	chasmRegistry *chasm.Registry,
+	cacheConfig *config.VisibilityCacheConfig,
 ) manager.VisibilityManager {
 	if visStore == nil {
 		return nil
@@ -152,6 +153,23 @@ func newVisibilityManager(
 		logger,
 		searchAttributesMapperProvider,
 		chasmRegistry,
+	)
+
+	// wrap with caching layer
+	cachingEnabled := false
+	cacheTTLSeconds := 20
+	if cacheConfig != nil {
+		cachingEnabled = cacheConfig.Enabled
+		if cacheConfig.CacheTTLSeconds > 0 {
+			cacheTTLSeconds = cacheConfig.CacheTTLSeconds
+		}
+	}
+	visManager = NewCachingVisibilityManager(
+		visManager,
+		cachingEnabled,
+		cacheTTLSeconds,
+		logger,
+		metricsHandler,
 	)
 
 	// wrap with rate limiter
@@ -219,6 +237,12 @@ func newVisibilityManagerFromDataStoreConfig(
 	if visStore == nil {
 		return nil, nil
 	}
+
+	var cacheConfig *config.VisibilityCacheConfig
+	if dsConfig.SQL != nil {
+		cacheConfig = dsConfig.SQL.VisibilityCache
+	}
+
 	return newVisibilityManager(
 		visStore,
 		maxReadQPS,
@@ -231,6 +255,7 @@ func newVisibilityManagerFromDataStoreConfig(
 		logger,
 		searchAttributesMapperProvider,
 		chasmRegistry,
+		cacheConfig,
 	), nil
 }
 
