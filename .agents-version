@@ -1,0 +1,9 @@
+{
+  "source": "headout/HeadoutAgentsConfig",
+  "version": "1a20e33",
+  "commit": "1a20e33",
+  "branch": "bundle-build",
+  "installed": "2026-06-16T11:33:34Z",
+  "repo_name": "temporal",
+  "agents": ["claude", "cursor", "codex", "opencode"]
+}
