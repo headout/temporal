@@ -1,0 +1,11 @@
+{
+  "$schema": "https://opencode.ai/schema.json",
+  "model": "anthropic/claude-sonnet-4-6",
+  "instructions": [
+    "../AGENTS.md"
+  ],
+  "plugin": [
+    "./plugins/plugin.mjs"
+  ],
+  "mcp": {}
+}

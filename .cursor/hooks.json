@@ -1,0 +1,76 @@
+{
+  "version": 1,
+  "hooks": {
+    "beforeSubmitPrompt": [
+      {
+        "command": ".cursor/hooks/skill-activation-prompt-ho.sh"
+      }
+    ],
+    "postToolUseFailure": [
+      {
+        "command": "HOOK_SIGNAL=tool_failure .cursor/hooks/signal-telemetry-ho.sh"
+      }
+    ],
+    "stop": [
+      {
+        "command": ".cursor/hooks/session-stop-telemetry-ho.sh"
+      }
+    ],
+    "sessionStart": [
+      {
+        "command": ".cursor/hooks/session-start-continuity-ho.sh"
+      }
+    ],
+    "sessionEnd": [
+      {
+        "command": "HOOK_EVENT=SessionEnd .cursor/hooks/session-stop-telemetry-ho.sh"
+      }
+    ],
+    "preCompact": [
+      {
+        "command": ".cursor/hooks/pre-compact-continuity-ho.sh"
+      },
+      {
+        "command": "HOOK_SIGNAL=compaction .cursor/hooks/signal-telemetry-ho.sh"
+      }
+    ],
+    "subagentStart": [
+      {
+        "command": "HOOK_EVENT=SubagentStart .cursor/hooks/track-agent-calls-ho.sh"
+      }
+    ],
+    "subagentStop": [
+      {
+        "command": ".cursor/hooks/track-agent-calls-ho.sh"
+      }
+    ],
+    "afterFileEdit": [
+      {
+        "command": "HOOK_PHASE=post .cursor/hooks/track-ai-edits-ho.sh"
+      },
+      {
+        "command": "HOOK_SIGNAL=file_edit .cursor/hooks/signal-telemetry-ho.sh"
+      }
+    ],
+    "afterTabFileEdit": [
+      {
+        "command": "HOOK_SIGNAL=tab_edit .cursor/hooks/signal-telemetry-ho.sh"
+      }
+    ],
+    "beforeShellExecution": [
+      {
+        "command": "HOOK_SIGNAL=shell_exec HOOK_PHASE=before .cursor/hooks/signal-telemetry-ho.sh"
+      }
+    ],
+    "afterShellExecution": [
+      {
+        "command": "HOOK_SIGNAL=shell_exec HOOK_PHASE=after .cursor/hooks/signal-telemetry-ho.sh"
+      }
+    ],
+    "afterMCPExecution": [
+      {
+        "command": "HOOK_SIGNAL=mcp_exec .cursor/hooks/signal-telemetry-ho.sh"
+      }
+    ]
+  }
+}

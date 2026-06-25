@@ -1,0 +1,165 @@
+{
+  "statusLine": {
+    "type": "command",
+    "command": "$CLAUDE_PROJECT_DIR/.claude/scripts/status.sh"
+  },
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/skill-activation-prompt-ho.sh"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "startup|start|resume|compact|clear",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/session-start-continuity-ho.sh"
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/pre-compact-continuity-ho.sh"
+          }
+        ]
+      }
+    ],
+    "PostCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "HOOK_SIGNAL=compaction $CLAUDE_PROJECT_DIR/.claude/hooks/signal-telemetry-ho.sh",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit|Create|StrReplace|Delete|ApplyPatch|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "HOOK_PHASE=pre $CLAUDE_PROJECT_DIR/.claude/hooks/track-ai-edits-ho.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "HOOK_SIGNAL=shell_exec HOOK_PHASE=before $CLAUDE_PROJECT_DIR/.claude/hooks/signal-telemetry-ho.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit|Create|StrReplace|Delete|ApplyPatch|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "HOOK_PHASE=post $CLAUDE_PROJECT_DIR/.claude/hooks/track-ai-edits-ho.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Task|Agent",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/track-agent-calls-ho.sh",
+            "async": true
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "HOOK_SIGNAL=shell_exec HOOK_PHASE=after $CLAUDE_PROJECT_DIR/.claude/hooks/signal-telemetry-ho.sh",
+            "async": true
+          }
+        ]
+      },
+      {
+        "matcher": "mcp__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "HOOK_SIGNAL=mcp_exec $CLAUDE_PROJECT_DIR/.claude/hooks/signal-telemetry-ho.sh",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "PostToolUseFailure": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "HOOK_SIGNAL=tool_failure $CLAUDE_PROJECT_DIR/.claude/hooks/signal-telemetry-ho.sh",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "HOOK_EVENT=SubagentStart $CLAUDE_PROJECT_DIR/.claude/hooks/track-agent-calls-ho.sh",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "HOOK_EVENT=SubagentStop $CLAUDE_PROJECT_DIR/.claude/hooks/track-agent-calls-ho.sh",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/session-stop-telemetry-ho.sh"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "HOOK_EVENT=SessionEnd $CLAUDE_PROJECT_DIR/.claude/hooks/session-stop-telemetry-ho.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

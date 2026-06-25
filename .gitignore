@@ -48,3 +48,75 @@
 
 # Ignoring AI agent files
 .agents/
+
+# HeadoutAgentsConfig - managed by headout/HeadoutAgentsConfig
+# ho agent configs: .claude
+.claude/**
+!.claude/*/
+!.claude/*/*-ho
+!.claude/*/*-ho/**
+!.claude/*/*-ho.md
+!.claude/*/*-ho.mdc
+!.claude/hooks/*-ho.sh
+!.claude/hooks/dist/
+!.claude/hooks/dist/*-ho.mjs
+!.claude/settings.json
+!.claude/scripts/status.sh
+!.claude/skills/skill-rules.json
+!.claude/CLAUDE.md
+!.claude/AGENTS.md
+.claude.backup.*
+# ho agent configs end: .claude
+# ho agent configs: .cursor
+.cursor/**
+!.cursor/*/
+!.cursor/*/*-ho
+!.cursor/*/*-ho/**
+!.cursor/*/*-ho.md
+!.cursor/*/*-ho.mdc
+!.cursor/hooks/*-ho.sh
+!.cursor/hooks/dist/
+!.cursor/hooks/dist/*-ho.mjs
+!.cursor/hooks.json
+!.cursor/mcp.json
+!.cursor/skills/skill-rules.json
+!.cursor/CLAUDE.md
+!.cursor/AGENTS.md
+!.cursor/worktrees.json
+.cursor.backup.*
+# ho agent configs end: .cursor
+# ho agent configs: .codex
+.codex/**
+!.codex/*/
+!.codex/*/*-ho
+!.codex/*/*-ho/**
+!.codex/*/*-ho.md
+!.codex/*/*-ho.mdc
+!.codex/hooks/*-ho.sh
+!.codex/hooks/dist/
+!.codex/hooks/dist/*-ho.mjs
+!.codex/skills/skill-rules.json
+!.codex/config.toml
+!.codex/hooks.json
+.codex.backup.*
+# ho agent configs end: .codex
+# ho agent configs: .opencode
+.opencode/**
+!.opencode/*/
+!.opencode/*/*-ho
+!.opencode/*/*-ho/**
+!.opencode/*/*-ho.md
+!.opencode/*/*-ho.mdc
+!.opencode/hooks/*-ho.sh
+!.opencode/hooks/dist/
+!.opencode/hooks/dist/*-ho.mjs
+!.opencode/skill-rules.json
+!.opencode/opencode.json
+!.opencode/plugins/
+!.opencode/plugins/plugin.mjs
+.opencode.backup.*
+# ho agent configs end: .opencode
+# ho agent configs footer: manifests
+!.agents-manifest.json
+!.agents-version
+.github.backup.*

@@ -1,0 +1,28 @@
+# Codex Configuration
+# See: https://developers.openai.com/codex/config-reference
+#
+#:schema https://developers.openai.com/codex/config-schema.json
+
+# Model settings
+# model = "o4-mini"
+# model_provider = "openai"
+
+# Approval & Sandbox
+# approval_policy = "untrusted"
+# sandbox_mode = "workspace-write"
+
+# MCP Servers
+# [mcp_servers.github]
+# command = "npx"
+# args = ["-y", "@modelcontextprotocol/server-github"]
+# env = { GITHUB_TOKEN = "${GITHUB_TOKEN}" }
+
+# Hooks: hooks.json enables PreToolUse/PostToolUse/Stop telemetry hooks.
+# See .codex/hooks.json for the full hook configuration.
+codex_hooks = true
+
+# Telemetry: best-effort notification hook.
+# Codex currently supports `notify` for `agent-turn-complete` events. We use it
+# to refresh the active session pointer and log hook activity so post-commit can
+# attribute commits to recent Codex sessions (even without env vars).
+notify = ["./.codex/hooks/notify-ho.sh"]

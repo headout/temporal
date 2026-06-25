@@ -1,0 +1,30 @@
+# Agent Orchestration Rules
+
+When the user asks to implement something, use implementation agents to preserve main context.
+
+## The Pattern
+- **Wrong — burns context**: main reads files → understands → makes edits → reports (2000+ tokens consumed in main context).
+- **Right — preserves context**: main spawns `agent("implement X per plan")` → agent reads files, understands, edits, tests → main gets a ~200-token summary.
+
+## When to Use Agents
+
+| Task Type | Use Agent? | Reason |
+|-----------|------------|--------|
+| Multi-file implementation | Yes | Agent handles complexity internally |
+| Following a plan phase | Yes | Agent reads plan, implements |
+| New feature with tests | Yes | Agent can run tests |
+| Single-line fix / quick config change | No | Overhead not worth it |
+
+## Key Insight
+Agents read their own context. Don't read files in main chat just to understand what to pass to an agent — give them the task and they figure it out.
+
+## Example Prompt
+```
+Implement Phase 4: Outcome Marking Hook from the Artifact Index plan.
+Plan location: thoughts/shared/plans/2026-01-15-artifact-index.md (search "Phase 4")
+Create: TypeScript hook, shell wrapper, Python script; register in settings.json.
+When done, summarize files created and any issues.
+```
+
+## Trigger Words
+"implement", "build", "create feature", "follow the plan", "do phase X", "use implementation agents".

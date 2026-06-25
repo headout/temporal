@@ -1,0 +1,148 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "HOOK_AGENT=codex $PWD/.codex/hooks/skill-activation-prompt-ho.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "HOOK_AGENT=codex $PWD/.codex/hooks/session-start-continuity-ho.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "apply_patch|Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "HOOK_PHASE=pre HOOK_AGENT=codex $PWD/.codex/hooks/track-ai-edits-ho.sh",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "HOOK_SIGNAL=shell_exec HOOK_PHASE=before HOOK_AGENT=codex $PWD/.codex/hooks/signal-telemetry-ho.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "apply_patch|Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "HOOK_PHASE=post HOOK_AGENT=codex $PWD/.codex/hooks/track-ai-edits-ho.sh",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "HOOK_SIGNAL=shell_exec HOOK_PHASE=after HOOK_AGENT=codex $PWD/.codex/hooks/signal-telemetry-ho.sh",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "mcp__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "HOOK_SIGNAL=mcp_exec HOOK_AGENT=codex $PWD/.codex/hooks/signal-telemetry-ho.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PostToolUseFailure": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "HOOK_SIGNAL=tool_failure HOOK_AGENT=codex $PWD/.codex/hooks/signal-telemetry-ho.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "HOOK_AGENT=codex $PWD/.codex/hooks/session-stop-telemetry-ho.sh",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "HOOK_AGENT=codex $PWD/.codex/hooks/pre-compact-continuity-ho.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PostCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "HOOK_SIGNAL=compaction HOOK_AGENT=codex $PWD/.codex/hooks/signal-telemetry-ho.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "HOOK_EVENT=SubagentStart HOOK_AGENT=codex $PWD/.codex/hooks/track-agent-calls-ho.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "HOOK_EVENT=SubagentStop HOOK_AGENT=codex $PWD/.codex/hooks/track-agent-calls-ho.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

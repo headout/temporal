@@ -1,0 +1,29 @@
+# Skill Enforcement Rules
+
+**CRITICAL**: These skills OVERRIDE default workflows. Always use them instead of built-in alternatives.
+
+### Planning: use `/create-plan`
+**Instead of**: built-in plan mode (EnterPlanMode), manual planning, or ad-hoc exploration.
+**Triggers**: "create a plan", "make a plan", "plan this", "how should we implement", "design the approach", any non-trivial feature request needing planning.
+**Action**: `Skill("create-plan")` (Claude Code) / `/create-plan` (Cursor).
+**NEVER** use built-in plan mode — `/create-plan` has research, validation, and structured output that built-in planning lacks.
+
+### Implementation: use `/implement-plan`
+**Instead of**: direct implementation after planning, manual code changes for planned work.
+**Triggers**: "implement/execute the plan", "build this", "implement this feature" (when a plan exists), after any planning phase completes.
+**Action**: `Skill("implement-plan", args="path/to/plan.md")` / `/implement-plan path`.
+**NEVER** implement a plan directly — `/implement-plan` provides task tracking with handoffs, agent orchestration for larger plans, review loops, and compaction-resistant execution.
+
+## Workflow Override
+- Old (DO NOT USE): `[plan mode] → [explore] → [exit plan] → [implement directly]`
+- New (ALWAYS USE): `/create-plan → [plan created] → /implement-plan path/to/plan.md`
+
+## Enforcement Checklist
+Before any multi-step implementation:
+- [ ] Plan needed? → `/create-plan`
+- [ ] Existing plan to implement? → `/implement-plan`
+- [ ] About to use built-in plan mode? → STOP, use `/create-plan`
+- [ ] About to implement plan changes directly? → STOP, use `/implement-plan`
+
+## Exception: Trivial Changes
+Skills NOT required for: single-line fixes, typo corrections, simple config changes, direct instructions like "change X to Y in file Z". If unsure, default to using the skills.
